@@ -1,0 +1,14 @@
+{
+    "name": "adrenth/raindrop-sdk",
+    "description": "Raindrop SDK",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alwin Drenth",
+            "email": "adrenth@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
