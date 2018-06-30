@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop\Exception;
 
+use InvalidArgumentException;
+
 /**
- * Class InvalidResponse
+ * Class BadCredentials
  *
  * @package Adrenth\Raindrop\Exception
  */
-class InvalidResponse extends \RuntimeException
+class BadCredentials extends InvalidArgumentException
 {
 
 }

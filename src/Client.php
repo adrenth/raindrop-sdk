@@ -4,108 +4,133 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop;
 
-use Adrenth\Raindrop\Exception\InvalidResponse;
-use GuzzleHttp\ClientInterface;
-use RuntimeException;
+use Adrenth\Raindrop\Exception\RegisterUserFailed;
+use Adrenth\Raindrop\Exception\UnregisterUserFailed;
+use Adrenth\Raindrop\Exception\VerifySignatureFailed;
+use Adrenth\Raindrop\TokenStorage\TokenStorageInterface;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class Client
  *
+ * Client-side Raindrop is a multi-factor authentication (MFA) solution for client login portals with many end-users
+ * frequently requesting access to their respective accounts.
+ *
  * @package Adrenth\Raindrop
  */
-class Client
+class Client extends Base
 {
     /**
-     * API Username.
+     * Your unique application ID
      *
      * @var string
      */
-    protected $username;
+    private $applicationId;
 
     /**
-     * API Key.
-     *
-     * @var string
+     * @param Settings $settings
+     * @param TokenStorageInterface $tokenStorage
+     * @param string $applicationId
      */
-    protected $key;
-
-    /**
-     * @var ClientInterface
-     */
-    protected $httpClient;
-
-    /**
-     * @param string $baseUri
-     * @param string $username
-     * @param string $key
-     */
-    public function __construct(string $baseUri, string $username, string $key)
+    public function __construct(Settings $settings, TokenStorageInterface $tokenStorage, string $applicationId)
     {
-        $this->username = $username;
-        $this->key = $key;
-        $this->httpClient = new \GuzzleHttp\Client([
-            'base_uri' => $baseUri,
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'User-Agent' => 'adrenth.raindrop-sdk/1.0'
-            ]
-        ]);
+        parent::__construct($settings, $tokenStorage);
+
+        $this->applicationId = $applicationId;
     }
 
     /**
-     * Whitelist Hydro Address.
-     *
-     * @param string $address
-     * @return string Hydro Address Identifier
-     * @throws InvalidResponse
+     * @param string $hydroId
+     * @return void
+     * @throws RegisterUserFailed
      */
-    public function whitelist(string $address): string
+    public function registerUser(string $hydroId): void
     {
-        $response = $this->httpClient->post(
-            sprintf('/whitelist/%s', $address),
-            [
+        try {
+            $response = $this->callHydroApi('post', '/application/client', [
                 'form_params' => [
-                    'username' => $this->username,
-                    'key' => $this->key
+                    'application_id' => $this->applicationId,
+                    'hydro_id' => $hydroId,
                 ]
-            ]
-        );
+            ]);
+        } catch (GuzzleException $e) {
+            throw RegisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        }
+
+        if ($response->getStatusCode() !== 201) {
+            throw RegisterUserFailed::withHydroId(
+                $hydroId,
+                sprintf('Invalid response code %s from server, expected 201.', $response->getStatusCode())
+            );
+        }
+    }
+
+    /**
+     * @param string $hydroId
+     * @throws UnregisterUserFailed
+     */
+    public function unregisterUser(string $hydroId): void
+    {
+        try {
+            $response = $this->callHydroApi(
+                'delete',
+                sprintf(
+                    '/application/client?hydro_id=%s&application_id=%s',
+                    $hydroId,
+                    $this->applicationId
+                )
+            );
+        } catch (GuzzleException $e) {
+            throw UnregisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        }
+
+        if ($response->getStatusCode() !== 204) {
+            throw UnregisterUserFailed::withHydroId(
+                $hydroId,
+                sprintf('Invalid response code %s from server, expected 204.', $response->getStatusCode())
+            );
+        }
+    }
+
+    /**
+     * @return int
+     * @throws Exception If it was not possible to gather sufficient entropy.
+     */
+    public function generateMessage(): int
+    {
+        return random_int(100000, 999999);
+    }
+
+    /**
+     * @param string $hydroId
+     * @param int $message
+     * @throws VerifySignatureFailed
+     */
+    public function verifySignature(string $hydroId, int $message)
+    {
+        try {
+            $response = $this->callHydroApi(
+                'get',
+                sprintf(
+                    '/application/client?message=%d&hydro_id=%s&application_id=%s',
+                    $message,
+                    $hydroId,
+                    $this->applicationId
+                )
+            );
+        } catch (GuzzleException $e) {
+            throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        }
 
         try {
-            $data = \GuzzleHttp\json_encode($response->getBody()->getContents(), true);
-        } catch (RuntimeException $e) {
-            throw new InvalidResponse(sprintf(
-                'Could not read response from server while whitelisting address %s: %s',
-                $address,
-                $e->getMessage()
-            ));
+            $json = $response->getBody()->getContents();
+
+            $data = \GuzzleHttp\json_decode($json, true);
+        } catch (\RuntimeException | \InvalidArgumentException $e) {
+            throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 
-        if (!is_array($data) || !isset($data['hydro_address_id']) || empty($data['hydro_address_id'])) {
-            throw new InvalidResponse(sprintf(
-                'Could not whitelist Hydro address %s due to an invalid server response.',
-                $address
-            ));
-        }
-
-        return $data['hydro_address_id'];
-    }
-
-    /**
-     * @param int $amount
-     * @param int $partnerId
-     * @param string $challenge
-     */
-    public function challenge(int $amount, int $partnerId, string $challenge)
-    {
-        // TODO
-    }
-
-    /**
-     * @param string $hydroAddresssId
-     */
-    public function authenticate(string $hydroAddresssId)
-    {
-        // TODO
+        // TODO: Handle response data.
     }
 }
