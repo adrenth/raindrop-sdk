@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop\TokenStorage;
 
-use Adrenth\Raindrop\AccessToken;
+use Adrenth\Raindrop\ApiAccessToken;
 
 /**
  * Class FileTokenStorage
@@ -29,13 +29,13 @@ class FileTokenStorage implements TokenStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getAccessToken(): ?AccessToken
+    public function getAccessToken(): ?ApiAccessToken
     {
         $data = file_get_contents($this->filename);
 
         if (!empty($data)) {
             $data = explode('|', $data);
-            return new AccessToken($data[0] ?? '', (int) ($data[1] ?? 0));
+            return new ApiAccessToken($data[0] ?? '', (int) ($data[1] ?? 0));
         }
 
         return null;
@@ -44,7 +44,7 @@ class FileTokenStorage implements TokenStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function setAccessToken(AccessToken $token): void
+    public function setAccessToken(ApiAccessToken $token): void
     {
         file_put_contents($this->filename, $token->getToken() . '|'. $token->getExpiresIn());
     }

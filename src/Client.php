@@ -7,9 +7,12 @@ namespace Adrenth\Raindrop;
 use Adrenth\Raindrop\Exception\RegisterUserFailed;
 use Adrenth\Raindrop\Exception\UnregisterUserFailed;
 use Adrenth\Raindrop\Exception\VerifySignatureFailed;
+use Adrenth\Raindrop\Response\VerifySignatureResponse;
 use Adrenth\Raindrop\TokenStorage\TokenStorageInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Class Client
@@ -19,7 +22,7 @@ use GuzzleHttp\Exception\GuzzleException;
  *
  * @package Adrenth\Raindrop
  */
-class Client extends Base
+class Client extends ApiBase
 {
     /**
      * Your unique application ID
@@ -29,12 +32,15 @@ class Client extends Base
     private $applicationId;
 
     /**
-     * @param Settings $settings
+     * @param ApiSettings $settings
      * @param TokenStorageInterface $tokenStorage
      * @param string $applicationId
      */
-    public function __construct(Settings $settings, TokenStorageInterface $tokenStorage, string $applicationId)
-    {
+    public function __construct(
+        ApiSettings $settings,
+        TokenStorageInterface $tokenStorage,
+        string $applicationId
+    ) {
         parent::__construct($settings, $tokenStorage);
 
         $this->applicationId = $applicationId;
@@ -48,12 +54,16 @@ class Client extends Base
     public function registerUser(string $hydroId): void
     {
         try {
-            $response = $this->callHydroApi('post', '/application/client', [
-                'form_params' => [
-                    'application_id' => $this->applicationId,
-                    'hydro_id' => $hydroId,
+            $response = $this->callHydroApi(
+                'post',
+                '/application/client',
+                [
+                    'form_params' => [
+                        'application_id' => $this->applicationId,
+                        'hydro_id' => $hydroId,
+                    ]
                 ]
-            ]);
+            );
         } catch (GuzzleException $e) {
             throw RegisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
@@ -105,9 +115,10 @@ class Client extends Base
     /**
      * @param string $hydroId
      * @param int $message
+     * @return VerifySignatureResponse
      * @throws VerifySignatureFailed
      */
-    public function verifySignature(string $hydroId, int $message)
+    public function verifySignature(string $hydroId, int $message): VerifySignatureResponse
     {
         try {
             $response = $this->callHydroApi(
@@ -119,18 +130,14 @@ class Client extends Base
                     $this->applicationId
                 )
             );
-        } catch (GuzzleException $e) {
+            $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
+        } catch (RuntimeException | InvalidArgumentException | GuzzleException $e) {
             throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 
-        try {
-            $json = $response->getBody()->getContents();
-
-            $data = \GuzzleHttp\json_decode($json, true);
-        } catch (\RuntimeException | \InvalidArgumentException $e) {
-            throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
-        }
-
-        // TODO: Handle response data.
+        return new VerifySignatureResponse(
+            $data['verification_id'],
+            strtotime($data['timestamp'])
+        );
     }
 }

@@ -17,18 +17,18 @@ use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
 /**
- * Class Base
+ * Class ApiBase
  *
  * @package Adrenth\Raindrop
  */
-abstract class Base
+abstract class ApiBase
 {
     private const USER_AGENT = 'adrenth.raindrop-sdk/1.0';
 
     /**
      * Settings
      *
-     * @var Settings
+     * @var ApiSettings
      */
     private $settings;
 
@@ -45,11 +45,11 @@ abstract class Base
     private $httpClient;
 
     /**
-     * @param Settings $settings
+     * @param ApiSettings $settings
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
-        Settings $settings,
+        ApiSettings $settings,
         TokenStorageInterface $tokenStorage
     ) {
         $this->settings = $settings;
@@ -82,7 +82,7 @@ abstract class Base
     /**
      * @throws RefreshTokenFailed
      */
-    protected function refreshToken(): AccessToken
+    protected function refreshToken(): ApiAccessToken
     {
         try {
             $client = new \GuzzleHttp\Client([
@@ -112,7 +112,7 @@ abstract class Base
             throw new RefreshTokenFailed('Invalid response from server');
         }
 
-        $accessToken = new AccessToken($data['access_token'], 0);
+        $accessToken = new ApiAccessToken($data['access_token'], 0);
 
         $this->tokenStorage->setAccessToken($accessToken);
 
@@ -141,10 +141,10 @@ abstract class Base
     }
 
     /**
-     * @return null|AccessToken
+     * @return null|ApiAccessToken
      * @throws RefreshTokenFailed
      */
-    private function getAccessToken(): ?AccessToken
+    private function getAccessToken(): ?ApiAccessToken
     {
         $accessToken = $this->tokenStorage->getAccessToken();
 

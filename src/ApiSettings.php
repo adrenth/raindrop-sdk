@@ -7,11 +7,11 @@ namespace Adrenth\Raindrop;
 use Adrenth\Raindrop\Environment\EnvironmentInterface;
 
 /**
- * Class Settings
+ * Class ApiSettings
  *
  * @package Adrenth\Raindrop
  */
-class Settings
+class ApiSettings
 {
     /**
      * Client ID

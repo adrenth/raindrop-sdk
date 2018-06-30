@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop\TokenStorage;
 
-use Adrenth\Raindrop\AccessToken;
+use Adrenth\Raindrop\ApiAccessToken;
 
 /**
  * Interface TokenStorageInterface
@@ -14,15 +14,15 @@ use Adrenth\Raindrop\AccessToken;
 interface TokenStorageInterface
 {
     /**
-     * @return AccessToken|null
+     * @return ApiAccessToken|null
      */
-    public function getAccessToken(): ?AccessToken;
+    public function getAccessToken(): ?ApiAccessToken;
 
     /**
-     * @param AccessToken $token
+     * @param ApiAccessToken $token
      * @return void
      */
-    public function setAccessToken(AccessToken $token): void;
+    public function setAccessToken(ApiAccessToken $token): void;
 
     /**
      * @return void

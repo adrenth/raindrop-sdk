@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Adrenth\Raindrop;
 
 /**
- * Class Token
+ * Class ApiAccessToken
  *
  * @package Adrenth\Raindrop
  */
-final class AccessToken
+class ApiAccessToken
 {
     /**
      * @var string
@@ -35,9 +35,9 @@ final class AccessToken
      * @param string $token
      * @param int $expiresIn
      * @param int $expireOffset
-     * @return AccessToken
+     * @return ApiAccessToken
      */
-    public static function create(string $token, int $expiresIn, int $expireOffset = 60): AccessToken
+    public static function create(string $token, int $expiresIn, int $expireOffset = 60): ApiAccessToken
     {
         return new self(
             $token,
