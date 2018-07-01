@@ -14,7 +14,7 @@ class ChallengeResponse
     /**
      * The challenge amount.
      *
-     * @var integer
+     * @var string
      */
     private $amount;
 
@@ -54,9 +54,9 @@ class ChallengeResponse
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getAmount(): int
+    public function getAmount(): string
     {
         return $this->amount;
     }
