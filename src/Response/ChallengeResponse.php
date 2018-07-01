@@ -40,12 +40,12 @@ class ChallengeResponse
     private $transactionHash;
 
     /**
-     * @param int $amount
+     * @param string $amount
      * @param int $challenge
      * @param int $partnerId
      * @param string $transactionHash
      */
-    public function __construct(int $amount, int $challenge, int $partnerId, string $transactionHash)
+    public function __construct(string $amount, int $challenge, int $partnerId, string $transactionHash)
     {
         $this->amount = $amount;
         $this->challenge = $challenge;

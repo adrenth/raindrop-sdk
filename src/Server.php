@@ -25,6 +25,8 @@ use RuntimeException;
 class Server extends ApiBase
 {
     /**
+     * All users who want to access to your Raindrop-enabled system will have to be whitelisted.
+     *
      * @param string $address Hydro Etherium Address
      * @return WhitelistResponse
      * @throws AddressWhitelistingFailed
@@ -34,13 +36,17 @@ class Server extends ApiBase
         try {
             $response = $this->callHydroApi(
                 'post',
-                '/whitelist/' . $address,
+                'whitelist',
                 [
-                    'timeout' => 60
+                    'timeout' => 60,
+                    'json' => [
+                        'address' => $address
+                    ]
                 ]
             );
+
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
-        } catch (GuzzleException $e) {
+        } catch (RuntimeException | InvalidArgumentException | GuzzleException $e) {
             throw AddressWhitelistingFailed::forAddress(
                 $address,
                 $e->getMessage()
@@ -54,6 +60,9 @@ class Server extends ApiBase
     }
 
     /**
+     * After being whitelisted, each user must authenticate through the Server-side Raindrop process once every 24 hours
+     * to retain access to the protected system.
+     *
      * @param string $hydroAddressId
      * @return ChallengeResponse
      * @throws ChallengeFailed
@@ -63,15 +72,15 @@ class Server extends ApiBase
         try {
             $response = $this->callHydroApi(
                 'post',
-                '/challenge',
+                'challenge',
                 [
-                    'form_params' => [
+                    'json' => [
                         'hydro_address_id' => $hydroAddressId
                     ]
                 ]
             );
 
-            $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
+            $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true, 512, JSON_BIGINT_AS_STRING);
         } catch (RuntimeException | InvalidArgumentException | GuzzleException $e) {
             throw ChallengeFailed::forHydroAddressId(
                 $hydroAddressId,
@@ -80,7 +89,7 @@ class Server extends ApiBase
         }
 
         return new ChallengeResponse(
-            (int) $data['amount'],
+            $data['amount'],
             (int) $data['challenge'],
             (int) $data['partner_id'],
             $data['transaction_hash']
@@ -97,7 +106,7 @@ class Server extends ApiBase
         try {
             $response = $this->callHydroApi(
                 'get',
-                '/authenticate?hydro_address_id=' . $hydroAddressId
+                'authenticate?hydro_address_id=' . $hydroAddressId
             );
 
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
@@ -108,7 +117,7 @@ class Server extends ApiBase
             );
         }
 
-        if ($response !== 200) {
+        if ($response->getStatusCode() !== 200) {
             throw AuthenticationFailed::forHydroAddressId($hydroAddressId, 'Unexpected response code.');
         }
 
