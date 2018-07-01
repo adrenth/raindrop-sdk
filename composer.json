@@ -1,12 +1,16 @@
 {
     "name": "adrenth/raindrop-sdk",
-    "description": "Raindrop SDK",
+    "description": "Hydro Raindrop SDK",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Alwin Drenth",
             "email": "adrenth@gmail.com"
+        },
+        {
+            "name": "Ronald Drenth",
+            "email": "ronalddrenth@gmail.com"
         }
     ],
     "minimum-stability": "stable",
