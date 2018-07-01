@@ -55,7 +55,7 @@ abstract class ApiBase
         $this->settings = $settings;
         $this->tokenStorage = $tokenStorage;
         $this->httpClient = new \GuzzleHttp\Client([
-            'base_uri' => $this->settings->getEnvironment()->getApiUrl() . '/hydro/v1',
+            'base_uri' => $this->settings->getEnvironment()->getApiUrl() . '/hydro/v1/',
             'headers' => [
                 'Content-Type' => 'application/json',
                 'User-Agent' => self::USER_AGENT
@@ -89,17 +89,14 @@ abstract class ApiBase
                 'base_uri' => $this->settings->getEnvironment()->getApiUrl(),
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'User-Agent' => self::USER_AGENT
+                    'User-Agent' => self::USER_AGENT,
+                    'Authorization' => 'Basic ' . base64_encode(
+                        $this->settings->getClientId() . ':' . $this->settings->getClientSecret()
+                    )
                 ]
             ]);
 
-            $response = $client->post('/authorization/v1/oauth/token?grant_type=client_credentials', [
-                RequestOptions::TIMEOUT => 10,
-                RequestOptions::AUTH => [
-                    'username' => $this->settings->getClientId(),
-                    'password' => $this->settings->getClientSecret()
-                ]
-            ]);
+            $response = $client->post('/authorization/v1/oauth/token?grant_type=client_credentials');
         } catch (RequestException $e) {
             throw new RefreshTokenFailed($e->getMessage());
         }
@@ -107,12 +104,13 @@ abstract class ApiBase
         try {
             $json = $response->getBody()->getContents();
 
-            $data = \GuzzleHttp\json_decode($json);
+            $data = \GuzzleHttp\json_decode($json, true);
         } catch (RuntimeException | InvalidArgumentException $e) {
             throw new RefreshTokenFailed('Invalid response from server');
         }
 
-        $accessToken = new ApiAccessToken($data['access_token'], 0);
+        // TODO: Extend the ApiAccessToken class.
+        $accessToken = new ApiAccessToken($data['access_token'], time() + $data['expires_in']);
 
         $this->tokenStorage->setAccessToken($accessToken);
 

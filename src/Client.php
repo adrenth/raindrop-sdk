@@ -56,11 +56,11 @@ class Client extends ApiBase
         try {
             $response = $this->callHydroApi(
                 'post',
-                '/application/client',
+                'application/client',
                 [
-                    'form_params' => [
+                    'json' => [
                         'application_id' => $this->applicationId,
-                        'hydro_id' => $hydroId,
+                        'hydro_id' => $hydroId
                     ]
                 ]
             );
@@ -86,7 +86,7 @@ class Client extends ApiBase
             $response = $this->callHydroApi(
                 'delete',
                 sprintf(
-                    '/application/client?hydro_id=%s&application_id=%s',
+                    'application/client?hydro_id=%s&application_id=%s',
                     $hydroId,
                     $this->applicationId
                 )
@@ -124,7 +124,7 @@ class Client extends ApiBase
             $response = $this->callHydroApi(
                 'get',
                 sprintf(
-                    '/application/client?message=%d&hydro_id=%s&application_id=%s',
+                    'verify_signature?message=%d&hydro_id=%s&application_id=%s',
                     $message,
                     $hydroId,
                     $this->applicationId
