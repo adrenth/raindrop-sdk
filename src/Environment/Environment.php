@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Adrenth\Raindrop\Environment;
 
 /**
- * Class EnvironmentInterface
+ * Class Environment
  *
  * @package Adrenth\Raindrop
  */
-interface EnvironmentInterface
+interface Environment
 {
     /**
      * @return string

@@ -9,7 +9,7 @@ namespace Adrenth\Raindrop\Environment;
  *
  * @package Adrenth\Raindrop\Environment
  */
-class ProductionEnvironment implements EnvironmentInterface
+class ProductionEnvironment implements Environment
 {
     /**
      * {@inheritdoc}

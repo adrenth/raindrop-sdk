@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop;
 
-use Adrenth\Raindrop\Environment\EnvironmentInterface;
+use Adrenth\Raindrop\Environment\Environment;
 
 /**
  * Class ApiSettings
@@ -30,19 +30,19 @@ class ApiSettings
     /**
      * API Environment
      *
-     * @var EnvironmentInterface
+     * @var Environment
      */
     protected $environment;
 
     /**
      * @param string $clientId
      * @param string $clientSecret
-     * @param EnvironmentInterface $environment
+     * @param Environment $environment
      */
     public function __construct(
         string $clientId,
         string $clientSecret,
-        EnvironmentInterface $environment
+        Environment $environment
     ) {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
@@ -66,9 +66,9 @@ class ApiSettings
     }
 
     /**
-     * @return EnvironmentInterface
+     * @return Environment
      */
-    public function getEnvironment(): EnvironmentInterface
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }
