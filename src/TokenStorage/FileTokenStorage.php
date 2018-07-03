@@ -11,7 +11,7 @@ use Adrenth\Raindrop\ApiAccessToken;
  *
  * @package Src\Classes\SapApi\TokenStorage
  */
-class FileTokenStorage implements TokenStorageInterface
+class FileTokenStorage implements TokenStorage
 {
     /**
      * @var string

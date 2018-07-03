@@ -7,11 +7,11 @@ namespace Adrenth\Raindrop\TokenStorage;
 use Adrenth\Raindrop\ApiAccessToken;
 
 /**
- * Interface TokenStorageInterface
+ * Interface TokenStorage
  *
  * @package Adrenth\Raindrop\TokenStorage
  */
-interface TokenStorageInterface
+interface TokenStorage
 {
     /**
      * @return ApiAccessToken|null

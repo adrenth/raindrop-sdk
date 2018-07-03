@@ -8,7 +8,7 @@ use Adrenth\Raindrop\Exception\RegisterUserFailed;
 use Adrenth\Raindrop\Exception\UnregisterUserFailed;
 use Adrenth\Raindrop\Exception\VerifySignatureFailed;
 use Adrenth\Raindrop\Response\VerifySignatureResponse;
-use Adrenth\Raindrop\TokenStorage\TokenStorageInterface;
+use Adrenth\Raindrop\TokenStorage\TokenStorage;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
@@ -33,12 +33,12 @@ class Client extends ApiBase
 
     /**
      * @param ApiSettings $settings
-     * @param TokenStorageInterface $tokenStorage
+     * @param TokenStorage $tokenStorage
      * @param string $applicationId
      */
     public function __construct(
         ApiSettings $settings,
-        TokenStorageInterface $tokenStorage,
+        TokenStorage $tokenStorage,
         string $applicationId
     ) {
         parent::__construct($settings, $tokenStorage);

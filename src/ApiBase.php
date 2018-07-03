@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Adrenth\Raindrop;
 
 use Adrenth\Raindrop\Exception\RefreshTokenFailed;
-use Adrenth\Raindrop\TokenStorage\TokenStorageInterface;
+use Adrenth\Raindrop\TokenStorage\TokenStorage;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
@@ -32,7 +32,7 @@ abstract class ApiBase
     private $settings;
 
     /**
-     * @var TokenStorageInterface
+     * @var TokenStorage
      */
     private $tokenStorage;
 
@@ -45,11 +45,11 @@ abstract class ApiBase
 
     /**
      * @param ApiSettings $settings
-     * @param TokenStorageInterface $tokenStorage
+     * @param TokenStorage $tokenStorage
      */
     public function __construct(
         ApiSettings $settings,
-        TokenStorageInterface $tokenStorage
+        TokenStorage $tokenStorage
     ) {
         $this->settings = $settings;
         $this->tokenStorage = $tokenStorage;
