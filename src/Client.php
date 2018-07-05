@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop;
 
+use Adrenth\Raindrop\Exception\ApiRequestFailed;
 use Adrenth\Raindrop\Exception\RegisterUserFailed;
 use Adrenth\Raindrop\Exception\UnregisterUserFailed;
 use Adrenth\Raindrop\Exception\VerifySignatureFailed;
@@ -64,7 +65,7 @@ class Client extends ApiBase
                     ]
                 ]
             );
-        } catch (GuzzleException $e) {
+        } catch (GuzzleException | ApiRequestFailed $e) {
             throw RegisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 
@@ -91,7 +92,7 @@ class Client extends ApiBase
                     $this->applicationId
                 )
             );
-        } catch (GuzzleException $e) {
+        } catch (GuzzleException | ApiRequestFailed $e) {
             throw UnregisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 
@@ -131,7 +132,7 @@ class Client extends ApiBase
                 )
             );
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException $e) {
+        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
             throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 

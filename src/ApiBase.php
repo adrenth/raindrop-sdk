@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop;
 
+use Adrenth\Raindrop\Exception\ApiRequestFailed;
 use Adrenth\Raindrop\Exception\RefreshTokenFailed;
 use Adrenth\Raindrop\TokenStorage\TokenStorage;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Promise\PromiseInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -68,6 +70,7 @@ abstract class ApiBase
      * @param array $options
      * @return ResponseInterface
      * @throws GuzzleException
+     * @throws ApiRequestFailed
      */
     protected function callHydroApi(string $method, string $uri, array $options = []): ResponseInterface
     {
@@ -133,6 +136,48 @@ abstract class ApiBase
 
             return $request;
         }), 'add_oauth2_header');
+
+        $stack->push(function (callable $handler) {
+            return function (RequestInterface $request, array $options) use ($handler) {
+                /** @var PromiseInterface $promise */
+                $promise = $handler($request, $options);
+
+                return $promise->then(
+                    function (ResponseInterface $response) {
+                        $statusCode = $response->getStatusCode();
+
+                        if ($response->getStatusCode() === 500) {
+                            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+                            throw ApiRequestFailed::withCode(ApiRequestFailed::INTERNAL_SERVER_ERROR, $response);
+                        }
+
+                        $contents = null;
+
+                        try {
+                            $contents = $response->getBody()->getContents();
+
+                            if (!empty($contents)) {
+                                $contents = \GuzzleHttp\json_decode($contents, true);
+                            }
+                        } catch (RuntimeException | InvalidArgumentException $e) {
+                            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+                            throw ApiRequestFailed::withCode(ApiRequestFailed::INVALID_JSON, $response);
+                        }
+
+                        if (is_array($contents)
+                            && array_key_exists('message', $contents)
+                            && ($statusCode >= 400 && $statusCode < 500)
+                        ) {
+                            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+                            throw ApiRequestFailed::withMessage($contents['message'], $response);
+                        }
+
+                        $response->getBody()->rewind();
+                        return $response;
+                    }
+                );
+            };
+        });
 
         return $stack;
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Adrenth\Raindrop;
 
 use Adrenth\Raindrop\Exception\AddressWhitelistingFailed;
+use Adrenth\Raindrop\Exception\ApiRequestFailed;
 use Adrenth\Raindrop\Exception\AuthenticationFailed;
 use Adrenth\Raindrop\Exception\ChallengeFailed;
 use Adrenth\Raindrop\Response\AuthenticationResponse;
@@ -46,7 +47,7 @@ class Server extends ApiBase
             );
 
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException $e) {
+        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
             throw AddressWhitelistingFailed::forAddress(
                 $address,
                 $e->getMessage()
@@ -81,7 +82,7 @@ class Server extends ApiBase
             );
 
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true, 512, JSON_BIGINT_AS_STRING);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException $e) {
+        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
             throw ChallengeFailed::forHydroAddressId(
                 $hydroAddressId,
                 $e->getMessage()
@@ -110,7 +111,7 @@ class Server extends ApiBase
             );
 
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException $e) {
+        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
             throw AuthenticationFailed::forHydroAddressId(
                 $hydroAddressId,
                 $e->getMessage()
