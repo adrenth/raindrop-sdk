@@ -31,11 +31,15 @@ class FileTokenStorage implements TokenStorage
      */
     public function getAccessToken(): ?ApiAccessToken
     {
+        if (!is_readable($this->filename)) {
+            return null;
+        }
+
         $data = file_get_contents($this->filename);
 
-        if (!empty($data)) {
+        if (!empty($data) && substr_count($data, '|') === 1) {
             $data = explode('|', $data);
-            return new ApiAccessToken($data[0] ?? '', (int) ($data[1] ?? 0));
+            return ApiAccessToken::create($data[0] ?? '', (int) ($data[1] ?? 0));
         }
 
         return null;
@@ -54,6 +58,8 @@ class FileTokenStorage implements TokenStorage
      */
     public function unsetAccessToken(): void
     {
-        unlink($this->filename);
+        if (file_exists($this->filename)) {
+            unlink($this->filename);
+        }
     }
 }

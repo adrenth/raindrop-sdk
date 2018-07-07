@@ -11,6 +11,8 @@ namespace Adrenth\Raindrop;
  */
 class ApiAccessToken
 {
+    public const EXPIRE_OFFSET = 60;
+
     /**
      * @var string
      */
@@ -37,8 +39,11 @@ class ApiAccessToken
      * @param int $expireOffset
      * @return ApiAccessToken
      */
-    public static function create(string $token, int $expiresIn, int $expireOffset = 60): ApiAccessToken
-    {
+    public static function create(
+        string $token,
+        int $expiresIn,
+        int $expireOffset = self::EXPIRE_OFFSET
+    ): ApiAccessToken {
         return new self(
             $token,
             $expiresIn - $expireOffset
