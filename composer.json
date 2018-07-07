@@ -15,7 +15,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.2",
+        "php": "^7.1",
         "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
@@ -26,10 +26,7 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true,
-        "platform": {
-            "php": "7.2"
-        }
+        "optimize-autoloader": true
     },
     "autoload": {
         "psr-4": {
