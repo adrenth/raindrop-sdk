@@ -1,5 +1,9 @@
 # Hydro Raindrop SDK PHP
 
+## 1.1.2
+
+* Add proper `@throws` PhpDoc for some functions.
+
 ## 1.1.1
 
 * Make method `getAccessToken` public. Can be used to verify if provided `ApiSettings` are valid.
