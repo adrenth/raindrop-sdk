@@ -27,6 +27,9 @@ $settings = new \Adrenth\Raindrop\ApiSettings(
 // Create token storage for storing the API's access token.
 $tokenStorage = new FileTokenStorage(__DIR__ . '/token.txt');
 
+// Ideally create your own TokenStorage adapter. 
+// The shipped FileTokenStorage is purely an example of how to create your own.
+
 /*
  * Client-side calls
  */
