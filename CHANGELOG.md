@@ -1,5 +1,9 @@
 # Hydro Raindrop SDK PHP
 
+## 1.1.1
+
+* Make method `getAccessToken` public. Can be used to verify if provided `ApiSettings` are valid.
+
 ## 1.1.0
 
 * Added `UserAlreadyMappedToApplication` and `UsernameDoesNotExist` exceptions to allow custom error handling.
