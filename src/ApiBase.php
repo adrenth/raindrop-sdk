@@ -24,22 +24,24 @@ use RuntimeException;
  */
 abstract class ApiBase
 {
-    private const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.0';
+    private const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.1';
 
     /**
-     * Settings
+     * Settings which are required to connect to the API.
      *
      * @var ApiSettings
      */
     private $settings;
 
     /**
+     * The storage for the API authentication token.
+     *
      * @var TokenStorage
      */
     private $tokenStorage;
 
     /**
-     * HTTP Client
+     * HTTP Client for making API calls.
      *
      * @var \GuzzleHttp\Client
      */
@@ -70,7 +72,6 @@ abstract class ApiBase
      * @param array $options
      * @return ResponseInterface
      * @throws GuzzleException
-     * @throws ApiRequestFailed
      */
     protected function callHydroApi(string $method, string $uri, array $options = []): ResponseInterface
     {
@@ -184,10 +185,12 @@ abstract class ApiBase
     }
 
     /**
+     * Get the API access token. This method can be used to verify if provided `ApiSettings` are valid.
+     *
      * @return null|ApiAccessToken
      * @throws RefreshTokenFailed
      */
-    private function getAccessToken(): ?ApiAccessToken
+    public function getAccessToken(): ?ApiAccessToken
     {
         $accessToken = $this->tokenStorage->getAccessToken();
 
