@@ -53,6 +53,8 @@ class Client extends ApiBase
      * @param string $hydroId
      * @return void
      * @throws RegisterUserFailed
+     * @throws UserAlreadyMappedToApplication
+     * @throws UsernameDoesNotExist
      */
     public function registerUser(string $hydroId): void
     {

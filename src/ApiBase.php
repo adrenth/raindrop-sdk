@@ -24,7 +24,7 @@ use RuntimeException;
  */
 abstract class ApiBase
 {
-    private const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.1';
+    private const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.2';
 
     /**
      * Settings which are required to connect to the API.
@@ -72,6 +72,7 @@ abstract class ApiBase
      * @param array $options
      * @return ResponseInterface
      * @throws GuzzleException
+     * @throws ApiRequestFailed
      */
     protected function callHydroApi(string $method, string $uri, array $options = []): ResponseInterface
     {
@@ -112,7 +113,6 @@ abstract class ApiBase
             throw new RefreshTokenFailed('Invalid response from server');
         }
 
-        // TODO: Extend the ApiAccessToken class.
         $accessToken = new ApiAccessToken($data['access_token'], time() + $data['expires_in']);
 
         $this->tokenStorage->setAccessToken($accessToken);
