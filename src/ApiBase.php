@@ -172,6 +172,7 @@ abstract class ApiBase
                             throw ApiRequestFailed::withMessage($contents['message'], $response);
                         }
 
+                        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                         $response->getBody()->rewind();
                         return $response;
                     }
