@@ -24,7 +24,7 @@ use RuntimeException;
  */
 abstract class ApiBase
 {
-    private const USER_AGENT = 'adrenth.raindrop-sdk/1.0';
+    private const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.0';
 
     /**
      * Settings
