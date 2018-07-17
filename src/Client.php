@@ -7,6 +7,8 @@ namespace Adrenth\Raindrop;
 use Adrenth\Raindrop\Exception\ApiRequestFailed;
 use Adrenth\Raindrop\Exception\RegisterUserFailed;
 use Adrenth\Raindrop\Exception\UnregisterUserFailed;
+use Adrenth\Raindrop\Exception\UserAlreadyMappedToApplication;
+use Adrenth\Raindrop\Exception\UsernameDoesNotExist;
 use Adrenth\Raindrop\Exception\VerifySignatureFailed;
 use Adrenth\Raindrop\Response\VerifySignatureResponse;
 use Adrenth\Raindrop\TokenStorage\TokenStorage;
@@ -65,7 +67,18 @@ class Client extends ApiBase
                     ]
                 ]
             );
-        } catch (GuzzleException | ApiRequestFailed $e) {
+        } catch (GuzzleException $e) {
+            throw RegisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        } catch (ApiRequestFailed $e) {
+            if ($e->getResponse()->getStatusCode() === 400) {
+                switch ($e->getMessage()) {
+                    case 'The user is already mapped to this application.':
+                        throw UserAlreadyMappedToApplication::withHydroId($hydroId, $e->getMessage());
+                    case 'The given username does not exist.':
+                        throw UsernameDoesNotExist::withHydroId($hydroId, $e->getMessage());
+                }
+            }
+
             throw RegisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 

@@ -24,7 +24,7 @@ use RuntimeException;
  */
 abstract class ApiBase
 {
-    private const USER_AGENT = 'adrenth.raindrop-sdk/1.0';
+    private const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.0';
 
     /**
      * Settings
@@ -172,6 +172,7 @@ abstract class ApiBase
                             throw ApiRequestFailed::withMessage($contents['message'], $response);
                         }
 
+                        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                         $response->getBody()->rewind();
                         return $response;
                     }

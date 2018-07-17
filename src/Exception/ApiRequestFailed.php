@@ -23,7 +23,7 @@ final class ApiRequestFailed extends Base
     private static $errorMessages = [
         self::UNKNOWN_ERROR => 'Unknown error occurred.',
         self::INTERNAL_SERVER_ERROR => 'Internal server error returned from the Hydro API.',
-        self::INVALID_JSON => 'Invalid JSON response from the Hydro API',
+        self::INVALID_JSON => 'Invalid JSON response from the Hydro Raindrop API.',
     ];
 
     /**
@@ -55,5 +55,13 @@ final class ApiRequestFailed extends Base
         $self->response = $response;
 
         return $self;
+    }
+
+    /**
+     * @return ResponseInterface
+     */
+    public function getResponse(): ResponseInterface
+    {
+        return $this->response;
     }
 }
