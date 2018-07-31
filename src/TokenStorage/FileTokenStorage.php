@@ -9,7 +9,7 @@ use Adrenth\Raindrop\ApiAccessToken;
 /**
  * Class FileTokenStorage
  *
- * @package Src\Classes\SapApi\TokenStorage
+ * @package Adrenth\Raindrop\TokenStorage
  */
 class FileTokenStorage implements TokenStorage
 {
