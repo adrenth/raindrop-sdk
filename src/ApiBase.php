@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Adrenth\Raindrop;
 
+use Adrenth\Raindrop\Exception\UnableToAcquireAccessToken;
 use Adrenth\Raindrop\Exception\ApiRequestFailed;
 use Adrenth\Raindrop\Exception\RefreshTokenFailed;
 use Adrenth\Raindrop\TokenStorage\TokenStorage;
@@ -24,7 +25,7 @@ use RuntimeException;
  */
 abstract class ApiBase
 {
-    private const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.2';
+    const USER_AGENT = 'adrenth.raindrop-sdk (PHP) version 1.1.2';
 
     /**
      * Settings which are required to connect to the API.
@@ -84,6 +85,7 @@ abstract class ApiBase
     }
 
     /**
+     * @return ApiAccessToken
      * @throws RefreshTokenFailed
      */
     protected function refreshToken(): ApiAccessToken
@@ -109,7 +111,9 @@ abstract class ApiBase
             $json = $response->getBody()->getContents();
 
             $data = \GuzzleHttp\json_decode($json, true);
-        } catch (RuntimeException | InvalidArgumentException $e) {
+        } catch (RuntimeException $e) {
+            throw new RefreshTokenFailed('Invalid response from server');
+        } catch (InvalidArgumentException $e) {
             throw new RefreshTokenFailed('Invalid response from server');
         }
 
@@ -160,7 +164,10 @@ abstract class ApiBase
                             if (!empty($contents)) {
                                 $contents = \GuzzleHttp\json_decode($contents, true);
                             }
-                        } catch (RuntimeException | InvalidArgumentException $e) {
+                        } catch (RuntimeException $e) {
+                            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
+                            throw ApiRequestFailed::withCode(ApiRequestFailed::INVALID_JSON, $response);
+                        } catch (InvalidArgumentException $e) {
                             /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                             throw ApiRequestFailed::withCode(ApiRequestFailed::INVALID_JSON, $response);
                         }
@@ -187,22 +194,20 @@ abstract class ApiBase
     /**
      * Get the API access token. This method can be used to verify if provided `ApiSettings` are valid.
      *
-     * @return null|ApiAccessToken
+     * @return ApiAccessToken
+     * @throws UnableToAcquireAccessToken
      * @throws RefreshTokenFailed
      */
-    public function getAccessToken(): ?ApiAccessToken
+    public function getAccessToken(): ApiAccessToken
     {
         $accessToken = $this->tokenStorage->getAccessToken();
 
         if ($accessToken && $accessToken->isExpired()) {
             $this->tokenStorage->unsetAccessToken();
-            $accessToken = null;
+
+            throw new UnableToAcquireAccessToken('Access Token provided by the token storage is expired.');
         }
 
-        if ($accessToken === null) {
-            $accessToken = $this->refreshToken();
-        }
-
-        return $accessToken;
+        return $this->refreshToken();
     }
 }

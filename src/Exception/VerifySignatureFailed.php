@@ -16,13 +16,13 @@ class VerifySignatureFailed extends \RuntimeException
     /**
      * @param string $hydroId
      * @param string $message
-     * @param Exception $previousException
+     * @param Exception|null $previousException
      * @return VerifySignatureFailed
      */
     public static function withHydroId(
         string $hydroId,
         string $message,
-        ?Exception $previousException = null
+        Exception $previousException = null
     ): VerifySignatureFailed {
         return new static(sprintf(
             'Could not verify signature with Hydro ID %s: %s',

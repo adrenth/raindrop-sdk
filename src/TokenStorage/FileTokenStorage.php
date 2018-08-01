@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Adrenth\Raindrop\TokenStorage;
 
 use Adrenth\Raindrop\ApiAccessToken;
+use Adrenth\Raindrop\Exception\UnableToAcquireAccessToken;
 
 /**
  * Class FileTokenStorage
@@ -29,10 +30,10 @@ class FileTokenStorage implements TokenStorage
     /**
      * {@inheritdoc}
      */
-    public function getAccessToken(): ?ApiAccessToken
+    public function getAccessToken(): ApiAccessToken
     {
         if (!is_readable($this->filename)) {
-            return null;
+            throw new UnableToAcquireAccessToken('Access Token is not found in the storage.');
         }
 
         $data = file_get_contents($this->filename);
@@ -42,13 +43,13 @@ class FileTokenStorage implements TokenStorage
             return ApiAccessToken::create($data[0] ?? '', (int) ($data[1] ?? 0));
         }
 
-        return null;
+        throw new UnableToAcquireAccessToken('Access Token is not found in the storage.');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setAccessToken(ApiAccessToken $token): void
+    public function setAccessToken(ApiAccessToken $token)
     {
         file_put_contents($this->filename, $token->getToken() . '|'. $token->getExpiresIn());
     }
@@ -56,7 +57,7 @@ class FileTokenStorage implements TokenStorage
     /**
      * {@inheritdoc}
      */
-    public function unsetAccessToken(): void
+    public function unsetAccessToken()
     {
         if (file_exists($this->filename)) {
             unlink($this->filename);

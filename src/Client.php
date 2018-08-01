@@ -56,7 +56,7 @@ class Client extends ApiBase
      * @throws UserAlreadyMappedToApplication
      * @throws UsernameDoesNotExist
      */
-    public function registerUser(string $hydroId): void
+    public function registerUser(string $hydroId)
     {
         try {
             $response = $this->callHydroApi(
@@ -96,7 +96,7 @@ class Client extends ApiBase
      * @param string $hydroId
      * @throws UnregisterUserFailed
      */
-    public function unregisterUser(string $hydroId): void
+    public function unregisterUser(string $hydroId)
     {
         try {
             $response = $this->callHydroApi(
@@ -107,7 +107,9 @@ class Client extends ApiBase
                     $this->applicationId
                 )
             );
-        } catch (GuzzleException | ApiRequestFailed $e) {
+        } catch (GuzzleException $e) {
+            throw UnregisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        } catch (ApiRequestFailed $e) {
             throw UnregisterUserFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 
@@ -147,7 +149,13 @@ class Client extends ApiBase
                 )
             );
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
+        } catch (RuntimeException $e) {
+            throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        } catch (InvalidArgumentException $e) {
+            throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        } catch (GuzzleException $e) {
+            throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
+        } catch (ApiRequestFailed $e) {
             throw VerifySignatureFailed::withHydroId($hydroId, $e->getMessage(), $e);
         }
 

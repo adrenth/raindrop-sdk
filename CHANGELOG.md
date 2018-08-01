@@ -1,5 +1,9 @@
 # Hydro Raindrop SDK PHP
 
+## Unreleased
+
+* Lower PHP requirement to `7.0`.
+
 ## 1.1.2
 
 * Add proper `@throws` PhpDoc for some functions.

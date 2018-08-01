@@ -13,9 +13,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class ApiRequestFailed extends Base
 {
-    public const UNKNOWN_ERROR = 0;
-    public const INTERNAL_SERVER_ERROR = 1;
-    public const INVALID_JSON = 2;
+    const UNKNOWN_ERROR = 0;
+    const INTERNAL_SERVER_ERROR = 1;
+    const INVALID_JSON = 2;
 
     /**
      * @var array

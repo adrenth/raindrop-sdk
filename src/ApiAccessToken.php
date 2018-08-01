@@ -11,7 +11,7 @@ namespace Adrenth\Raindrop;
  */
 class ApiAccessToken
 {
-    public const EXPIRE_OFFSET = 60;
+    const EXPIRE_OFFSET = 60;
 
     /**
      * @var string

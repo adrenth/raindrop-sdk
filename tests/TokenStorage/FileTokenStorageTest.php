@@ -26,49 +26,49 @@ final class FileTokenStorageTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->root = vfsStream::setup();
     }
 
     /**
      * @test
+     * @expectedException \Adrenth\Raindrop\Exception\UnableToAcquireAccessToken
      */
-    public function itShouldReturnNullWhenFileDoesNotExist(): void
+    public function itShouldThrowAnExceptionWhenFileDoesNotExist()
     {
         $storage = new FileTokenStorage(vfsStream::url('root/token.txt'));
-
-        self::assertNull($storage->getAccessToken());
+        $storage->getAccessToken();
     }
 
     /**
      * @test
+     * @expectedException \Adrenth\Raindrop\Exception\UnableToAcquireAccessToken
      */
-    public function itShouldReturnNullWhenFileIsEmpty(): void
+    public function itShouldThrowAnExceptionWhenFileIsEmpty()
     {
         $this->root->addChild((new vfsStreamFile('token.txt'))->withContent(''));
 
         $storage = new FileTokenStorage(vfsStream::url('root/token.txt'));
-
-        self::assertNull($storage->getAccessToken());
+        $storage->getAccessToken();
     }
 
     /**
      * @test
+     * @expectedException \Adrenth\Raindrop\Exception\UnableToAcquireAccessToken
      */
-    public function itShouldReturnNullWhenFileIsInvalid(): void
+    public function itShouldThrowAnExceptionWhenFileIsInvalid()
     {
         $this->root->addChild((new vfsStreamFile('token.txt'))->withContent('invalid_contents'));
 
         $storage = new FileTokenStorage(vfsStream::url('root/token.txt'));
-
-        self::assertNull($storage->getAccessToken());
+        $storage->getAccessToken();
     }
 
     /**
      * @test
      */
-    public function itShouldReturnAnAccessToken(): void
+    public function itShouldReturnAnAccessToken()
     {
         $token = 'access_token';
         $expiresIn = 3600;
@@ -86,7 +86,7 @@ final class FileTokenStorageTest extends TestCase
     /**
      * @test
      */
-    public function itShouldCreateAnFileWhenSettingTheAccessToken(): void
+    public function itShouldCreateAnFileWhenSettingTheAccessToken()
     {
         $token = 'access_token';
         $expiresIn = 3600;
@@ -104,7 +104,7 @@ final class FileTokenStorageTest extends TestCase
     /**
      * @test
      */
-    public function itShouldDeleteTheFileWhenUnsettingTheAccessToken(): void
+    public function itShouldDeleteTheFileWhenUnsettingTheAccessToken()
     {
         $storage = new FileTokenStorage(vfsStream::url('root/token.txt'));
         $storage->setAccessToken(ApiAccessToken::create('token', 3600));
