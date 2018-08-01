@@ -11,7 +11,7 @@ Client-side Raindrop is a next-gen 2FA solution. Hydro has open-sourced the [cod
 ## Server-side Raindrop
 Server-side Raindrop is an enterprise-level security protocol to secure APIs and other shared resources. Hydro has open-sourced the [code powering Server-side Raindrop](https://github.com/hydrogen-dev/smart-contracts/tree/master/hydro-token-and-raindrop-enterprise).
 
-## Installation instuctions
+## Installation instructions
 
 `composer require adrenth/raindrop-sdk`
 
