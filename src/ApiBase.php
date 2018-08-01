@@ -195,19 +195,21 @@ abstract class ApiBase
      * Get the API access token. This method can be used to verify if provided `ApiSettings` are valid.
      *
      * @return ApiAccessToken
-     * @throws UnableToAcquireAccessToken
      * @throws RefreshTokenFailed
      */
     public function getAccessToken(): ApiAccessToken
     {
-        $accessToken = $this->tokenStorage->getAccessToken();
+        try {
+            $accessToken = $this->tokenStorage->getAccessToken();
+        } catch (UnableToAcquireAccessToken $e) {
+            $accessToken = null;
+        }
 
         if ($accessToken && $accessToken->isExpired()) {
             $this->tokenStorage->unsetAccessToken();
-
-            throw new UnableToAcquireAccessToken('Access Token provided by the token storage is expired.');
+            $accessToken = null;
         }
 
-        return $this->refreshToken();
+        return $accessToken ?: $this->refreshToken();
     }
 }
