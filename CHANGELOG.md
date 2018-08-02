@@ -1,6 +1,6 @@
 # Hydro Raindrop SDK PHP
 
-## Unreleased
+## 1.2.0
 
 * Lower PHP requirement to `7.0`.
 * [BC] Refactor `ApiAccessToken` method `getExpiresIn` to `getExpiresAt`.
