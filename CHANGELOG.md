@@ -3,7 +3,10 @@
 ## Unreleased
 
 * Lower PHP requirement to `7.0`.
-* [BC] Refactor `ApiAccessToken` property `expiresIn` to `expiresAt`.
+* [BC] Refactor `ApiAccessToken` method `getExpiresIn` to `getExpiresAt`.
+* [BC] Refactor `TokenStorage` method `getAccessToken` to not be nullable anymore, 
+  instead the exception `UnableToAcquireAccessToken` will be thrown when an access token 
+  cannot be acquired from the storage. 
 
 ## 1.1.2
 
