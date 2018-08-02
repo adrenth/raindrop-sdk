@@ -11,7 +11,7 @@ namespace Adrenth\Raindrop;
  */
 class ApiAccessToken
 {
-    public const EXPIRE_OFFSET = 60;
+    const EXPIRE_OFFSET = 60;
 
     /**
      * @var string
@@ -21,32 +21,32 @@ class ApiAccessToken
     /**
      * @var int
      */
-    private $expiresIn;
+    private $expiresAt;
 
     /**
      * @param string $token
-     * @param int $expiresIn
+     * @param int $expiresAt
      */
-    public function __construct(string $token, int $expiresIn)
+    public function __construct(string $token, int $expiresAt)
     {
         $this->token = $token;
-        $this->expiresIn = $expiresIn;
+        $this->expiresAt = $expiresAt;
     }
 
     /**
      * @param string $token
-     * @param int $expiresIn
+     * @param int $expiresAt
      * @param int $expireOffset
      * @return ApiAccessToken
      */
     public static function create(
         string $token,
-        int $expiresIn,
+        int $expiresAt,
         int $expireOffset = self::EXPIRE_OFFSET
     ): ApiAccessToken {
         return new self(
             $token,
-            $expiresIn - $expireOffset
+            $expiresAt - $expireOffset
         );
     }
 
@@ -61,9 +61,9 @@ class ApiAccessToken
     /**
      * @return int
      */
-    public function getExpiresIn(): int
+    public function getExpiresAt(): int
     {
-        return $this->expiresIn;
+        return $this->expiresAt;
     }
 
     /**
@@ -71,6 +71,6 @@ class ApiAccessToken
      */
     public function isExpired(): bool
     {
-        return time() > $this->expiresIn;
+        return time() > $this->expiresAt;
     }
 }

@@ -47,11 +47,14 @@ class Server extends ApiBase
             );
 
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
-            throw AddressWhitelistingFailed::forAddress(
-                $address,
-                $e->getMessage()
-            );
+        } catch (RuntimeException $e) {
+            throw AddressWhitelistingFailed::forAddress($address, $e->getMessage());
+        } catch (InvalidArgumentException $e) {
+            throw AddressWhitelistingFailed::forAddress($address, $e->getMessage());
+        } catch (GuzzleException $e) {
+            throw AddressWhitelistingFailed::forAddress($address, $e->getMessage());
+        } catch (ApiRequestFailed $e) {
+            throw AddressWhitelistingFailed::forAddress($address, $e->getMessage());
         }
 
         return new WhitelistResponse(
@@ -82,11 +85,14 @@ class Server extends ApiBase
             );
 
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true, 512, JSON_BIGINT_AS_STRING);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
-            throw ChallengeFailed::forHydroAddressId(
-                $hydroAddressId,
-                $e->getMessage()
-            );
+        } catch (RuntimeException $e) {
+            throw ChallengeFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
+        } catch (InvalidArgumentException $e) {
+            throw ChallengeFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
+        } catch (GuzzleException $e) {
+            throw ChallengeFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
+        } catch (ApiRequestFailed $e) {
+            throw ChallengeFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
         }
 
         return new ChallengeResponse(
@@ -111,11 +117,14 @@ class Server extends ApiBase
             );
 
             $data = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
-        } catch (RuntimeException | InvalidArgumentException | GuzzleException | ApiRequestFailed $e) {
-            throw AuthenticationFailed::forHydroAddressId(
-                $hydroAddressId,
-                $e->getMessage()
-            );
+        } catch (RuntimeException $e) {
+            throw AuthenticationFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
+        } catch (InvalidArgumentException $e) {
+            throw AuthenticationFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
+        } catch (GuzzleException $e) {
+            throw AuthenticationFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
+        } catch (ApiRequestFailed $e) {
+            throw AuthenticationFailed::forHydroAddressId($hydroAddressId, $e->getMessage());
         }
 
         if ($response->getStatusCode() !== 200) {
