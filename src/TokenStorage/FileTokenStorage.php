@@ -51,7 +51,7 @@ class FileTokenStorage implements TokenStorage
      */
     public function setAccessToken(ApiAccessToken $token)
     {
-        file_put_contents($this->filename, $token->getToken() . '|'. $token->getExpiresIn());
+        file_put_contents($this->filename, $token->getToken() . '|'. $token->getExpiresAt());
     }
 
     /**

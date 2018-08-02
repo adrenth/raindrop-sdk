@@ -71,16 +71,16 @@ final class FileTokenStorageTest extends TestCase
     public function itShouldReturnAnAccessToken()
     {
         $token = 'access_token';
-        $expiresIn = 3600;
+        $expiresAt = time() + 3600;
 
-        $this->root->addChild((new vfsStreamFile('token.txt'))->withContent("$token|$expiresIn"));
+        $this->root->addChild((new vfsStreamFile('token.txt'))->withContent("$token|$expiresAt"));
 
         $storage = new FileTokenStorage(vfsStream::url('root/token.txt'));
         $accessToken = $storage->getAccessToken();
 
         self::assertNotNull($accessToken);
         self::assertEquals($token, $accessToken->getToken());
-        self::assertEquals($expiresIn - ApiAccessToken::EXPIRE_OFFSET, $accessToken->getExpiresIn());
+        self::assertEquals($expiresAt - ApiAccessToken::EXPIRE_OFFSET, $accessToken->getExpiresAt());
     }
 
     /**

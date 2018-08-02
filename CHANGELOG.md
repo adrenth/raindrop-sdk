@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Lower PHP requirement to `7.0`.
+* [BC] Refactor `ApiAccessToken` property `expiresIn` to `expiresAt`.
 
 ## 1.1.2
 
