@@ -6,22 +6,30 @@ More information, including detailed API documentation, is available in the [Rai
 Raindrop comes in two flavors:
 
 ## Client-side Raindrop
+
 Client-side Raindrop is a next-gen 2FA solution. Hydro has open-sourced the [code powering Client-side Raindrop](https://github.com/hydrogen-dev/smart-contracts/tree/master/client-raindrop).
 
 ## Server-side Raindrop
+
 Server-side Raindrop is an enterprise-level security protocol to secure APIs and other shared resources. Hydro has open-sourced the [code powering Server-side Raindrop](https://github.com/hydrogen-dev/smart-contracts/tree/master/hydro-token-and-raindrop-enterprise).
 
 ## Installation instructions
 
 `composer require adrenth/raindrop-sdk`
 
-## Usage
+## Usage example
 
 ```
+require __DIR__ . '/../vendor/autoload.php';
+
+$clientId = '...';
+$clientSecret = '...';
+$applicationId = '...';
+
 $settings = new \Adrenth\Raindrop\ApiSettings(
     $clientId,
     $clientSecret,
-    new SandboxEnvironment
+    new \Adrenth\Raindrop\Environment\SandboxEnvironment
 );
 
 // Create token storage for storing the API's access token.
